@@ -1,0 +1,228 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Demo.Style"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                    xmlns:cv ="clr-namespace:Demo.Convert"
+                    >
+
+    <!--转换器-->
+    <cv:GenderConvert x:Key="GenderConvert"/>
+    <cv:StudentClassConvert x:Key="StudentClassConvert"/>
+    <cv:StudentGradeConvert x:Key="StudentGradeConvert"/>
+    <cv:BoolVsiableConvert x:Key="BoolVsiableConvert"/>
+
+    <cv:ClassPulldownConvert x:Key="ClassPulldownConvert"/>
+    <cv:GradePulldownConvert x:Key="GradePulldownConvert"/>
+    <cv:GradePullSelecteConvert x:Key="GradePullSelecteConvert"/>
+    
+    <cv:CommonMultiConverter x:Key="CommonMultiConverter"/>
+
+    <cv:DebugConvert x:Key="Debug"/>
+    
+    <!--公用颜色、笔刷-->
+    <SolidColorBrush x:Key="PrimaryBackground" Color="#FF2D2D30"/>
+    <SolidColorBrush x:Key="PrimaryHeighLight" Color="#FF007ACC"/>
+    <SolidColorBrush x:Key="SecondaryBackground" Color="#FF1E1E1E"/>
+    <SolidColorBrush x:Key="SecondaryHeighLight" Color="#FF569CD6"/>
+    <SolidColorBrush x:Key="OddBackground" Color="#FF3E3E42"/>
+    <SolidColorBrush x:Key="EvenBackground" Color="Transparent"/>
+    <SolidColorBrush x:Key="OverBackground" Color="Transparent"/>
+    
+    <SolidColorBrush x:Key="NormalForeground" Color="White"/>
+    <SolidColorBrush x:Key="SelectedForeground" Color="#FFE7B215"/>
+    <SolidColorBrush x:Key="AccessForeground" Color="LightBlue"/>
+    <SolidColorBrush x:Key="OpenedForeground" Color="LightGreen"/>
+    <SolidColorBrush x:Key="WarringForeground" Color="Red"/>
+
+
+    <!--Icon String-->
+    <FontFamily x:Key="IconFont">pack://application:,,,/Resource/#iconfont</FontFamily>
+    <sys:String x:Key="Home">&#xe60a;</sys:String>
+    <sys:String x:Key="Arrow">&#xe62a;</sys:String>
+    <sys:String x:Key="AddUser">&#xe600;</sys:String>
+    <sys:String x:Key="MultiSelect">&#xe608;</sys:String>
+    <sys:String x:Key="DelUser">&#xe929;</sys:String>
+    <sys:String x:Key="Remove">&#xe638;</sys:String>
+    <sys:String x:Key="MultiDelUser">&#xe609;</sys:String>
+    <sys:String x:Key="MultiMoveUser">&#xe612;</sys:String>
+    <sys:String x:Key="Add">&#xe62f;</sys:String>
+    <sys:String x:Key="Search">&#xe6e0;</sys:String>
+    <sys:String x:Key="Edit">&#xe644;</sys:String>
+
+    <Style TargetType="TextBox">
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    
+    <!--IconTextBlock-->
+    <Style x:Key="Icon_Text" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource IconFont}"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="Foreground" Value="{StaticResource NormalForeground}"/>
+        <Style.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="Tag" Value="Access"/>
+                </MultiTrigger.Conditions>
+                 <Setter Property="Foreground" Value="{StaticResource SecondaryHeighLight}"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="Tag" Value="Warring"/>
+                </MultiTrigger.Conditions>
+                 <Setter Property="Foreground" Value="Red"/>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True"/>
+                    <Condition Property="Tag" Value="Open"/>
+                </MultiTrigger.Conditions>
+                <Setter Property="Foreground" Value="LightGreen"/>
+            </MultiTrigger>
+            
+        </Style.Triggers>
+    </Style>
+
+    <!--无边框背景按钮-->
+    <Style TargetType="Button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Margin="{TemplateBinding Margin}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                        <ContentPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--确认按钮-->
+    <Style x:Key="Sure_Button" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        TextElement.Foreground="{StaticResource NormalForeground}"
+                        Background="{StaticResource SecondaryHeighLight}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--取消按钮-->
+    <Style x:Key="Cancel_Button" TargetType="Button">
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        VerticalAlignment="{TemplateBinding VerticalAlignment}"
+                        HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                        Margin="{TemplateBinding Margin}"
+                        BorderBrush="Orange"
+                        BorderThickness="1"
+                        TextElement.Foreground="OrangeRed"
+                        Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <!--开关形式的ToggleButton-->
+    <Style x:Key="Switch_Toggle_Button" TargetType="ToggleButton">
+        <Setter Property="Height" Value="22"/>
+        <Setter Property="Width" Value="38"/>
+        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="Margin" Value="4,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Grid Cursor="Hand">
+                        <Border x:Name="Main_" CornerRadius="8"
+                                            Width="{TemplateBinding Width}" Height="{TemplateBinding Height}" Background="LightGreen"/>
+                        <Border x:Name="Sub_"  CornerRadius="100" Margin="-2"
+                                            Height="{TemplateBinding Height}" Width="{TemplateBinding Height}" Background="White">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="5" Color="Black" Direction="0" ShadowDepth="0"/>
+                            </Border.Effect>
+                        </Border>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="False">
+                            <Setter Property="Background" Value="Gray" TargetName="Main_"/>
+                            <Setter Property="HorizontalAlignment" Value="Left" TargetName="Sub_"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Background" Value="LightGreen" TargetName="Main_"/>
+                            <Setter Property="HorizontalAlignment" Value="Right" TargetName="Sub_"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--透明背景 togglbutton-->
+    <Style x:Key="Transparent_Toggle_Button" TargetType="ToggleButton">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ToggleButton">
+                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}" Margin="{TemplateBinding Margin}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="{StaticResource PrimaryHeighLight}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--按钮型多选模式ToggleButton-->
+    <Style x:Key="MultiSelect_Toggle_Button" TargetType="ToggleButton" BasedOn="{StaticResource Transparent_Toggle_Button}">
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Content">
+            <Setter.Value>
+                <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource MultiSelect}" />
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Content">
+                    <Setter.Value>
+                        <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource MultiSelect}" Foreground="LightGreen"/>
+                    </Setter.Value>
+                </Setter>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+</ResourceDictionary>

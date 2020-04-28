@@ -1,0 +1,109 @@
+﻿<ex:ExWindow x:Class="Demo.StudentInfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Demo"
+        xmlns:ex="clr-namespace:ExToolKit;assembly=ExToolKit"
+        xmlns:View="clr-namespace:Demo.ViewModel"
+        mc:Ignorable="d" 
+             WindowStartupLocation="CenterScreen"
+             ResizeMode="NoResize"
+             Background="{StaticResource PrimaryBackground}" 
+             Foreground="{StaticResource NormalForeground}"
+        Title="{Binding Title}" Height="340" Width="460">
+    <Window.DataContext>
+        <Binding Source="{StaticResource Locator}" Path="Student"/>
+    </Window.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="姓名" Margin="5,10"/>
+        <TextBox Grid.Column="2" Grid.Row="1" Width="120"  Margin="5" Text="{Binding studentInfo.Name}"/>
+
+        <TextBlock Grid.Column="3" Grid.Row="1" Text="出生日期" Margin="5,10"/>
+        <DatePicker Grid.Column="4" Grid.Row="1" SelectedDate="{Binding studentInfo.DateOfBirth}" Margin="5,0" Width="120"  VerticalAlignment="Center"/>
+
+        <TextBlock Grid.Column="1" Grid.Row="3" Text="性别" Margin="5,10"/>
+        <ComboBox Grid.Column="2" Grid.Row="3" Width="120"  Margin="5" 
+                  ItemsSource="{x:Static View:MainViewModel.GenderType}" 
+                  SelectedValue="{Binding studentInfo.Gender,Converter={StaticResource GenderConvert}}"/>
+
+        <TextBlock Grid.Column="3" Grid.Row="3" Text="民族" Margin="5,10"/>
+        <TextBox Grid.Column="4" Grid.Row="3" Text="{Binding studentInfo.Nation}" Margin="5"/>
+        
+        <TextBlock Grid.Column="1" Grid.Row="5" Text="籍贯" Margin="5,10"/>
+        <TextBox Grid.Column="2" Grid.Row="5" Text="{Binding studentInfo.NativePlace}" Margin="5"/>
+        
+        <TextBlock Grid.Column="3" Grid.Row="5" Text="联系电话" Margin="5,10"/>
+        <TextBox Grid.Column="4" Grid.Row="5" Text="{Binding studentInfo.Telephone}" Margin="5"/>
+        
+        <TextBlock Grid.Column="1" Grid.Row="7" Text="联系地址" Margin="5,10"/>
+        <TextBox Grid.Column="2" Grid.Row="7" Grid.ColumnSpan="3" Text="{Binding studentInfo.Address}" Margin="5"/>
+
+        <TextBlock Grid.Column="1" Grid.Row="8" Text="年级" Margin="5,10"/>
+        <ComboBox Grid.Column="2" Grid.Row="8" x:Name="Select_Grade"
+                  ItemsSource="{Binding studentInfo.ID,Converter={StaticResource GradePulldownConvert}}"
+                  SelectedIndex="{Binding RelativeSource={RelativeSource Mode=Self},
+            Mode=OneWay,
+            Path=ItemsSource,
+            Converter={StaticResource GradePullSelecteConvert},
+            ConverterParameter=FromStudent}"
+                  DisplayMemberPath="Grade"
+                  Margin="5"/>
+        
+        <TextBlock Grid.Column="3" Grid.Row="8" Text="班级" Margin="5,10"/>
+        <ComboBox Grid.Column="4" Grid.Row="8" 
+                  ItemsSource="{Binding ElementName=Select_Grade,Path=SelectedItem,
+            Converter={StaticResource ClassPulldownConvert}}"
+                  DisplayMemberPath="Name"
+                  SelectedValue="{Binding classInfo,Mode=TwoWay}"
+                  Margin="5"/>
+        
+        <StackPanel Orientation="Horizontal"
+                    Grid.Column="1" Grid.Row="9" Grid.ColumnSpan="5" Height="24"
+                    FlowDirection="RightToLeft" Margin="10,0">
+            
+            <Button Content="确定" Width="64" Style="{StaticResource Sure_Button}" Command="{Binding Submit}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                        <Binding RelativeSource="{RelativeSource AncestorType=Window}"/>
+                        <Binding Source="True"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+
+            <Border Width="32"></Border>
+
+            <Button Content="取消" Width="32" Style="{StaticResource Cancel_Button}" Command="{Binding Submit}">
+                <Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                        <Binding RelativeSource="{RelativeSource AncestorType=Window}"/>
+                        <Binding Source="False"/>
+                    </MultiBinding>
+                </Button.CommandParameter>
+            </Button>
+        </StackPanel>
+
+
+    </Grid>
+</ex:ExWindow>

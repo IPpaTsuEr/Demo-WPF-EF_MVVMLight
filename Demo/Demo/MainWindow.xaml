@@ -1,0 +1,342 @@
+﻿<ex:ExWindow x:Class="Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        
+        xmlns:ex="clr-namespace:ExToolKit;assembly=ExToolKit"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:local="clr-namespace:Demo"
+        xmlns:view ="clr-namespace:Demo.ViewModel"
+        
+        mc:Ignorable="d"
+        Title="Demo" 
+             Height="450" Width="800" 
+             WindowStartupLocation="CenterScreen"
+             Foreground="{StaticResource NormalForeground}"
+             Background="{StaticResource PrimaryBackground}">
+    
+    <Window.DataContext>
+        <Binding Source="{StaticResource Locator}" Path="Main"/>
+    </Window.DataContext>
+
+    <Window.Resources>
+        
+        <CollectionViewSource x:Key="Class_Grouped" Source="{Binding ClassList}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Grade"/>
+            </CollectionViewSource.GroupDescriptions>
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="Grade"/>
+                <scm:SortDescription PropertyName="Name"/>
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="3"/>
+            <ColumnDefinition Width="10*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!--左侧-->
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            
+            <!--顶部控制栏-->
+            <Grid Height="32" Margin="0" Background="{StaticResource SecondaryBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <ToggleButton ToolTip="编辑模式" 
+                              Height="16" Width="26"
+                              IsChecked="{Binding ClassEditModel,Mode=TwoWay}"
+                              Style="{StaticResource Switch_Toggle_Button}">
+                </ToggleButton>
+
+                <Button Grid.Column="2" ToolTip="新增班级" Margin="6,0"
+                        Command="{Binding AddClass}" Height="24" Cursor="Hand">
+                    <Button.Content>
+                        <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource Add}" Tag="Access"/>
+                    </Button.Content>
+                </Button>
+            </Grid>
+
+            <!--下部班级列表栏-->
+            <ListView Grid.Row="1" 
+                      x:Name="List_View"
+                      Style="{StaticResource Class_List}"
+                      ItemTemplate="{StaticResource Class_List_Data}"
+                      ItemContainerStyle="{StaticResource  Class_List_Item}"
+                      ItemsSource="{Binding Source={StaticResource Class_Grouped}}"
+                      >
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding DataChange}">
+                            <i:InvokeCommandAction.CommandParameter>
+                                <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                                    <Binding ElementName="Data_Grid"/>
+                                    <Binding ElementName="List_View" Path="SelectedItem"/>
+                                </MultiBinding>
+                            </i:InvokeCommandAction.CommandParameter>
+                        </i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                
+                <ListView.GroupStyle>
+                    <GroupStyle ContainerStyle="{StaticResource List_Group_Style}"/>
+                </ListView.GroupStyle>
+            
+            </ListView>
+            
+        </Grid>
+
+        <GridSplitter Grid.Column="1" Background="Transparent" BorderThickness="0"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <!--右侧-->
+         <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+        
+             <!--顶部控制栏-->
+            <Grid Height="32" Background="{StaticResource SecondaryBackground}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal">
+                    
+                    <Button Command="{Binding DataChange}" Width="30" ToolTip="返回到总列表">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                                <Binding ElementName="Data_Grid"/>
+                                <Binding Source=" "/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource Home}" Tag="Access"/>
+                        </Button.Content>
+                    </Button>
+                    
+                    <Border Width="12"/>
+
+                    <Button Grid.Column="4" ToolTip="添加学生信息" Width="32" 
+                        Command="{ Binding AddStudent}">
+                        <Button.Content>
+                            <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource AddUser}" Tag="Access"/>
+                        </Button.Content>
+                    </Button>
+
+                    <Border Width="12"/>
+
+                    <!--多选操作开关-->
+                    <ToggleButton Grid.Column="5" Style="{StaticResource MultiSelect_Toggle_Button}"
+                                  ToolTip="多选、单选模式切换" Width="32"
+                                  Command="{ Binding MultyMode}" 
+                                  CommandParameter="{Binding ElementName=Data_Grid}">
+                    </ToggleButton>
+
+                    <!--多选操作功能按钮列表-->
+                    <StackPanel Orientation="Horizontal" Visibility="{Binding MultiSelectModel,Converter={StaticResource BoolVsiableConvert}}">
+                        <Button Grid.Column="6" ToolTip="删除选定的学生信息" Width="32" 
+                                Command="{Binding MultiDeleteStudent}" 
+                                CommandParameter="{Binding ElementName=Data_Grid,Path=SelectedItems}">
+                            <Button.Content>
+                                <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource MultiDelUser}" Tag="Warring"/>
+                            </Button.Content>
+                        </Button>
+                        <Button Grid.Column="7" ToolTip="移动到指定班级" Width="32" 
+                                Command="{Binding SendTo}" 
+                                CommandParameter="{Binding ElementName=Data_Grid,Path=SelectedItems}">
+                            <Button.Content>
+                                <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource MultiMoveUser}" Tag="Access"/>
+                            </Button.Content>
+                        </Button>                        
+                    </StackPanel>
+
+                </StackPanel>
+
+                <!--搜索栏-->
+                <StackPanel Grid.Column="2" Orientation="Horizontal" Margin="4" Background="{StaticResource PrimaryBackground}">
+                    <Button Background="{StaticResource PrimaryBackground}" Command="{Binding DataChange}" >
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                                <Binding ElementName="Data_Grid"/>
+                                <Binding ElementName="Search_Text" Path="Text"/>
+                                <Binding ElementName="Search_Type" Path="SelectedValue"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                            
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource Search}" Margin="4,1" Tag="Access"/>
+                            <ComboBox x:Name="Search_Type" Width="14" Height="24" 
+                                      Background="{StaticResource PrimaryBackground}"
+                                      ItemsSource="{x:Static view:MainViewModel.SearchType}"
+                                      SelectedIndex="0"  BorderThickness="0"
+                                      VerticalAlignment="Center" VerticalContentAlignment="Center">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DataContext,RelativeSource={RelativeSource Mode=TemplatedParent},StringFormat={} 按 {0} 查询}"/>
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                                <ComboBox.Template>
+                                    <ControlTemplate TargetType="ComboBox">
+                                        <Grid>
+                                            <ToggleButton ClickMode="Press" 
+                                                          Style="{StaticResource Transparent_Toggle_Button}"
+                                                          IsChecked="{Binding IsDropDownOpen,RelativeSource={RelativeSource Mode=TemplatedParent}}">
+                                                <TextBlock FontSize="12" Style="{StaticResource Icon_Text}" Text="{StaticResource Arrow}" RenderTransformOrigin="0.5,0.5">
+                                                     <TextBlock.RenderTransform>
+                                                        <RotateTransform Angle="180"/>
+                                                    </TextBlock.RenderTransform>                                                   
+                                                </TextBlock>
+
+                                            </ToggleButton>
+                                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}" AllowsTransparency="True">
+                                                <Border Background="{TemplateBinding Background}" Margin="0,0,15,15">
+                                                    <Border.Effect>
+                                                        <DropShadowEffect Color="Black" BlurRadius="5" ShadowDepth="6"/>
+                                                    </Border.Effect>
+                                                    <ScrollViewer Margin="0" SnapsToDevicePixels="True" 
+                                                                  HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                                                        <StackPanel IsItemsHost="True" TextElement.Foreground="{StaticResource NormalForeground}"
+                                                                    KeyboardNavigation.DirectionalNavigation="Contained" Margin="2,4"/>                                                        
+                                                    </ScrollViewer>
+
+                                                </Border>
+                                            </Popup>                                        
+                                        </Grid>
+
+                                    </ControlTemplate>
+                                </ComboBox.Template>
+                            </ComboBox>
+                        </StackPanel>
+                    </Button>
+                    <TextBox x:Name="Search_Text" Width="200"
+                             BorderThickness="0" 
+                             Background="{StaticResource PrimaryBackground}"
+                             Foreground="{StaticResource NormalForeground}"
+                             CaretBrush="{StaticResource NormalForeground}"
+                             VerticalAlignment="Center" Height="24" 
+                             VerticalContentAlignment="Center" Margin="6,0,0,0">
+                        <TextBox.InputBindings>
+                            <KeyBinding Key="Return" Command="{Binding DataChange}">
+                                <KeyBinding.CommandParameter>
+                                    <MultiBinding Converter="{StaticResource CommonMultiConverter}">
+                                        <Binding ElementName="Data_Grid"/>
+                                        <Binding ElementName="Search_Text" Path="Text"/>
+                                        <Binding ElementName="Search_Type" Path="SelectedValue"/>
+                                    </MultiBinding>
+                                </KeyBinding.CommandParameter>
+                            </KeyBinding>
+                        </TextBox.InputBindings>
+                    </TextBox>
+
+                </StackPanel>
+
+            </Grid>
+
+             <!--数据显示区域-->
+            <DataGrid Grid.Row="1" 
+                      ItemsSource="{Binding StudentList}" 
+                      Name="Data_Grid"
+                      Style="{StaticResource Student_Data_Grid}">
+            
+                <DataGrid.ItemContainerStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Height" Value="42"/>
+                        <Setter Property="MinWidth" Value="32"/>
+                    </Style>
+                </DataGrid.ItemContainerStyle>
+            <!--列表头-->
+                <DataGrid.Columns>
+                    
+                    <DataGridTextColumn Header="学号" Width="*" MinWidth="32" Binding="{Binding ID}" 
+                                        SortMemberPath="ID" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="姓名" Width="*" MinWidth="32" Binding="{Binding Name}" SortMemberPath="Name" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="年龄" Width="*" MinWidth="32"  Binding="{Binding Age}" SortMemberPath="Age" IsReadOnly="True"/>
+                    <DataGridComboBoxColumn Header="性别" Width="*" MinWidth="32"  IsReadOnly="True"
+                                            ItemsSource="{x:Static view:MainViewModel.GenderType}" 
+                                            SelectedValueBinding="{Binding Gender,Converter={StaticResource GenderConvert}}"/>
+                    <DataGridTextColumn Header="班级" Width="*" MinWidth="32" Binding="{Binding ClassInfo,Converter={StaticResource StudentGradeConvert}}" SortMemberPath="ClassInfo.Grade" IsReadOnly="True"/>
+                    <!--<DataGridTextColumn Header="班级" Width="*" MinWidth="32" Binding="{Binding ID,Converter={StaticResource StudentClassConvert}}"/>-->
+                    <DataGridTextColumn Header="民族" Width="*" Binding="{Binding Nation}" SortMemberPath="Nation"  IsReadOnly="True"/>
+                    <DataGridTextColumn Header="籍贯" Width="*" Binding="{Binding NativePlace}" SortMemberPath="NativePlace" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="联系地址" Width="*" Binding="{Binding Address}" SortMemberPath="Address" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="联系电话" Width="*" Binding="{Binding Telephone}" SortMemberPath="Telephone" IsReadOnly="True"/>
+                    <DataGridTemplateColumn Width="Auto"  MinWidth="70">
+                        <DataGridTemplateColumn.Header>
+                            <ToggleButton
+                                  ToolTip="编辑模式"
+                                  IsChecked="{Binding DataContext.EditModel,RelativeSource={RelativeSource AncestorType=Window},Mode=TwoWay}"
+                                  Style="{StaticResource Switch_Toggle_Button}" Height="18" Width="26"/>
+                        </DataGridTemplateColumn.Header>
+                        <DataGridTemplateColumn.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="BorderThickness" Value="0"/>
+                            </Style>
+                        </DataGridTemplateColumn.CellStyle>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Margin="10,0" 
+                                            Visibility="{Binding DataContext.EditModel,
+                                                        RelativeSource={RelativeSource AncestorType=Window},
+                                                        Converter={StaticResource BoolVsiableConvert}}">
+                                    <Button ToolTip="修改"  
+                                            Command="{Binding DataContext.UpdateStudent,RelativeSource={RelativeSource AncestorType=Window}}" 
+                                            CommandParameter="{Binding }">
+                                        <Button.Content>
+                                            <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource Edit}" Tag="Open"/>
+                                        </Button.Content>
+                                    </Button>
+                                    <Border Width="16"/>
+                                    <Button ToolTip="删除" Grid.Column="2" 
+                                            Command="{Binding DataContext.DeleteStudent,RelativeSource={RelativeSource AncestorType=Window}}" 
+                                            CommandParameter="{Binding}">
+                                        <Button.Content>
+                                            <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource DelUser}" Tag="Warring"/>
+                                        </Button.Content>
+                                    </Button>
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                                        
+                </DataGrid.Columns>
+            </DataGrid>
+        
+         </Grid>
+
+        <!--底部提示信息-->
+        <ContentControl Grid.Row="1" Grid.Column="0" Height="32" Grid.ColumnSpan="3" 
+                        HorizontalContentAlignment="Stretch" VerticalContentAlignment="Center"
+                        >
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" TextBlock.Foreground="Gray">
+                <TextBlock Text="单击" FontSize="14"/>
+                <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource Home}" Foreground="{StaticResource AccessForeground}"/>
+                <TextBlock Text="刷新数据 打开 "  FontSize="14"/>
+                <TextBlock Style="{StaticResource Icon_Text}" Text="{StaticResource MultiSelect}" Foreground="{StaticResource OpenedForeground}"/>
+                <TextBlock Text="呼出隐藏菜单 使用Shift+鼠标单击 实现多选操作"  FontSize="14"/>
+            </StackPanel>
+        </ContentControl>
+    </Grid>
+   
+</ex:ExWindow>
